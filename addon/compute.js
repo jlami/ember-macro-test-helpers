@@ -1,5 +1,6 @@
 import Component from 'ember-component';
 import get from 'ember-metal/get';
+import Ember from 'ember';
 import { default as set, setProperties } from 'ember-metal/set';
 
 export default function({
@@ -13,7 +14,10 @@ export default function({
   assertReadOnly
 }) {
   let MyComponent = baseClass.extend({
-    computed
+    computed,
+    set(key, val) {
+      return Ember.run(null, () => this._super(key, val));
+    },
   });
   let subject;
   try {
@@ -30,7 +34,7 @@ export default function({
   // to test recomputes
   get(subject, 'computed');
 
-  setProperties(subject, properties);
+  Ember.run(null, () => setProperties(subject, properties));
 
   let result = get(subject, 'computed');
 
